@@ -18,6 +18,11 @@ type WebSocket = {
   send: (data: string) => void,
 };
 
+type WebSocketReq = {
+  on: (event: string, Function) => void,
+  send: (data: string) => void,
+};
+
 type Logger = {
   log: (...args: Array<mixed>) => void,
 };
@@ -69,6 +74,7 @@ function hotMiddleware(
       platform: event.platform,
       target: event.target,
       sockets: event[event.target].filter(
+        // TODO update for object {socket, req}
         socket =>
           socket.readyState === socket.OPEN &&
           (event.platform === 'all' ||
@@ -78,7 +84,7 @@ function hotMiddleware(
     .skipWhile(({ sockets }) => !sockets.length)
     .subscribe(
       event => {
-        const { target, sockets, body, platform } = event;
+        const { target, sockets, body, platform } = event; // TODO update for object {socket, req}
 
         sockets.forEach(socket => {
           logger.log(
@@ -107,8 +113,8 @@ function hotMiddleware(
 
 function createConnectionStream(wsProxy: WebSocketProxy, id: string) {
   return Observable.create((observer: *) => {
-    wsProxy.onConnection((socket: WebSocket) => {
-      observer.next(socket);
+    wsProxy.onConnection((socket: WebSocket, req: WebSocketReq) => {
+      observer.next({ socket, req });
     });
   })
     .scan((acc, socket) => [...acc, socket], [])

@@ -26,8 +26,8 @@ class WebSocketProxy {
    * Called everytime new WebSocket connection is established. Each specifies
    * `role` param, which we use to determine type of connection.
    */
-  onConnection(socket) {
-    const { url } = socket.upgradeReq;
+  onConnection(socket, req) {
+    const { url } = req;
 
     if (url.indexOf('role=debugger') >= 0) {
       this.handleDebuggerSocket(socket);

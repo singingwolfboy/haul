@@ -10,10 +10,10 @@
  */
 function webSocketProxy(webSocketServer: *, path: string) {
   return {
-    onConnection(handler: (socket: WebSocket) => void) {
-      webSocketServer.on('connection', socket => {
-        if (socket.upgradeReq.url.indexOf(path) === 0) {
-          handler(socket);
+    onConnection(handler: (socket: WebSocket, req: WebSocketReq) => void) {
+      webSocketServer.on('connection', (socket, req) => {
+        if (req.url.indexOf(path) === 0) {
+          handler(socket, req);
         }
       });
     },
