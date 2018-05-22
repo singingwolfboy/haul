@@ -40,10 +40,8 @@ module.exports = class Fork extends EventEmitter {
       transportServer = createWebSocketServer();
 
       // WebSocket connection is established after the Fork is created.
-      transportServer.on('connection', socket => {
-        const platformMatch = socket.upgradeReq.url.match(
-          /platform=(ios|android)/
-        );
+      transportServer.on('connection', (socket, req) => {
+        const platformMatch = req.url.match(/platform=(ios|android)/);
 
         if (!platformMatch) {
           throw new Error('Incorrect platform');
